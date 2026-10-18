@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Belajar Dulu, Belanja Kemudian</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Belajar Dulu, Belanja Kemudian</h1>
+    <p class="subjudul">Catat keuanganmu. Mau beli barang keinginan? Selesaikan misi belajar dulu!</p>
+  </header>
+
+  <main class="konten">
+    <!-- Ringkasan keuangan -->
+    <section aria-labelledby="judul-ringkasan">
+      <h2 id="judul-ringkasan" class="sr-only">Ringkasan keuangan</h2>
+      <div class="kartu-ringkasan">
+        <div class="kartu">
+          <span class="label">Total Pemasukan</span>
+          <strong id="total-pemasukan" class="angka pemasukan">Rp 0</strong>
+        </div>
+        <div class="kartu">
+          <span class="label">Total Pengeluaran</span>
+          <strong id="total-pengeluaran" class="angka pengeluaran">Rp 0</strong>
+        </div>
+        <div class="kartu">
+          <span class="label">Saldo</span>
+          <strong id="saldo" class="angka">Rp 0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pesan status (sukses / galat) -->
+    <div id="pesan" class="pesan" role="status" aria-live="polite" hidden></div>
+
+    <!-- Form transaksi -->
+    <section class="panel" aria-labelledby="judul-form">
+      <h2 id="judul-form">Tambah Transaksi</h2>
+      <form id="form-transaksi" novalidate>
+        <fieldset id="fieldset-form" class="tanpa-garis">
+          <legend class="sr-only">Form transaksi</legend>
+
+          <div class="grid-form">
+            <div class="bidang">
+              <label for="nama">Nama transaksi</label>
+              <input type="text" id="nama" maxlength="60" autocomplete="off" placeholder="Contoh: Nasi goreng">
+              <span class="galat" id="galat-nama"></span>
+            </div>
+
+            <div class="bidang">
+              <label for="jumlah">Jumlah (Rupiah)</label>
+              <input type="number" id="jumlah" min="1" step="1" inputmode="numeric" placeholder="Contoh: 25000">
+              <span class="galat" id="galat-jumlah"></span>
+            </div>
+
+            <div class="bidang">
+              <label for="kategori">Kategori</label>
+              <select id="kategori"></select>
+              <span class="galat" id="galat-kategori"></span>
+            </div>
+
+            <div class="bidang">
+              <span class="label-grup" id="label-jenis">Jenis</span>
+              <div class="grup-radio" role="radiogroup" aria-labelledby="label-jenis">
+                <label><input type="radio" name="jenis" value="Pemasukan"> Pemasukan</label>
+                <label><input type="radio" name="jenis" value="Pengeluaran" checked> Pengeluaran</label>
+              </div>
+              <span class="galat" id="galat-jenis"></span>
+            </div>
+
+            <div class="bidang" id="grup-tipe">
+              <label for="tipe">Tipe pengeluaran</label>
+              <select id="tipe">
+                <option value="">-- Pilih tipe --</option>
+                <option value="Kebutuhan">Kebutuhan</option>
+                <option value="Keinginan">Keinginan</option>
+              </select>
+              <span class="galat" id="galat-tipe"></span>
+            </div>
+          </div>
+
+          <button type="submit" class="tombol utama">Simpan Transaksi</button>
+        </fieldset>
+      </form>
+    </section>
+
+    <!-- Panel Misi Belajar (muncul untuk pengeluaran Keinginan) -->
+    <section id="panel-misi" class="panel panel-misi" aria-labelledby="judul-misi" hidden>
+      <h2 id="judul-misi">Misi Belajar</h2>
+      <p id="misi-info" class="misi-info"></p>
+      <p>Pilih satu teknik belajar dan selesaikan untuk membuka pembelian ini:</p>
+
+      <div class="grup-radio">
+        <label><input type="radio" name="teknik" value="pomodoro"> Pomodoro</label>
+        <label><input type="radio" name="teknik" value="recall"> Active Recall</label>
+      </div>
+
+      <!-- Teknik Pomodoro -->
+      <div id="bagian-pomodoro" class="bagian-teknik" hidden>
+        <p>Fokus belajar sampai timer habis. Jika timer di-reset, misi harus diulang dari awal.</p>
+        <div id="timer" class="timer" aria-live="off">25:00</div>
+        <div class="baris-tombol">
+          <button type="button" id="tombol-mulai" class="tombol utama">Mulai Timer</button>
+          <button type="button" id="tombol-reset" class="tombol">Reset Timer</button>
+        </div>
+      </div>
+
+      <!-- Teknik Active Recall -->
+      <div id="bagian-recall" class="bagian-teknik" hidden>
+        <p>Tutup catatanmu, lalu tulis dari ingatan apa yang baru kamu pelajari.</p>
+        <div class="bidang">
+          <label for="topik">Topik yang dipelajari</label>
+          <input type="text" id="topik" maxlength="100" autocomplete="off" placeholder="Contoh: Hill-Climbing">
+        </div>
+        <div class="bidang">
+          <label for="ringkasan">Ringkasan dari ingatan</label>
+          <textarea id="ringkasan" rows="5" placeholder="Tulis ringkasanmu di sini..."></textarea>
+          <span id="penghitung" class="penghitung">0 / 50 karakter</span>
+          <span class="galat" id="galat-recall"></span>
+        </div>
+        <button type="button" id="tombol-selesai-recall" class="tombol utama" disabled>Selesaikan Misi</button>
+      </div>
+
+      <div class="baris-tombol pemisah">
+        <button type="button" id="tombol-batal" class="tombol bahaya">Batalkan Misi</button>
+      </div>
+    </section>
+
+    <!-- Daftar transaksi -->
+    <section class="panel" aria-labelledby="judul-daftar">
+      <h2 id="judul-daftar">Daftar Transaksi</h2>
+      <div class="bungkus-tabel">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Tanggal</th>
+              <th scope="col">Nama</th>
+              <th scope="col">Kategori</th>
+              <th scope="col">Jenis</th>
+              <th scope="col">Tipe</th>
+              <th scope="col" class="kanan">Jumlah</th>
+              <th scope="col">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="isi-tabel"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
