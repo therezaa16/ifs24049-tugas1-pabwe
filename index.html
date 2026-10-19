@@ -2,154 +2,415 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090d1c">
   <title>Belajar Dulu, Belanja Kemudian</title>
+  <!-- Satu Google Font (opsional). Jika gagal dimuat, otomatis memakai font sistem. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <h1>Belajar Dulu, Belanja Kemudian</h1>
-    <p class="subjudul">Catat keuanganmu. Mau beli barang keinginan? Selesaikan misi belajar dulu!</p>
-  </header>
+  <a class="lewati" id="lewati" href="#konten">Lewati ke konten</a>
 
-  <main class="konten">
-    <!-- Ringkasan keuangan -->
-    <section aria-labelledby="judul-ringkasan">
-      <h2 id="judul-ringkasan" class="sr-only">Ringkasan keuangan</h2>
-      <div class="kartu-ringkasan">
-        <div class="kartu">
-          <span class="label">Total Pemasukan</span>
-          <strong id="total-pemasukan" class="angka pemasukan">Rp 0</strong>
-        </div>
-        <div class="kartu">
-          <span class="label">Total Pengeluaran</span>
-          <strong id="total-pengeluaran" class="angka pengeluaran">Rp 0</strong>
-        </div>
-        <div class="kartu">
-          <span class="label">Saldo</span>
-          <strong id="saldo" class="angka">Rp 0</strong>
-        </div>
+  <div class="aplikasi">
+    <!-- Kepala: di ponsel bar atas, di desktop bagian atas sidebar -->
+    <header class="kepala">
+      <a class="merek" href="#dashboard">
+        <span class="merek-ikon" aria-hidden="true">🎓</span>
+        <span class="merek-teks">Belajar Dulu,<br>Belanja Kemudian</span>
+      </a>
+      <a class="chip-pemain" href="#profil" aria-label="Buka profil">
+        <span class="avatar kecil" id="chip-avatar" aria-hidden="true">🦊</span>
+        <span id="chip-level">Lv. 1</span>
+      </a>
+    </header>
+
+    <!-- Navigasi: ponsel = bar bawah, desktop = sidebar kiri -->
+    <nav class="navigasi" aria-label="Navigasi utama">
+      <a class="nav-item" href="#dashboard" data-nav="dashboard">
+        <span class="nav-ikon" aria-hidden="true">🏠</span><span class="nav-teks">Dashboard</span>
+      </a>
+      <a class="nav-item" href="#quest" data-nav="quest">
+        <span class="nav-ikon" aria-hidden="true">⚔️</span><span class="nav-teks">Quest Hub</span>
+      </a>
+      <a class="nav-item" href="#vault" data-nav="vault">
+        <span class="nav-ikon" aria-hidden="true">🗃️</span><span class="nav-teks">Data Vault</span>
+      </a>
+      <a class="nav-item" href="#profil" data-nav="profil">
+        <span class="nav-ikon" aria-hidden="true">👤</span><span class="nav-teks">Profil</span>
+      </a>
+    </nav>
+
+    <main id="konten" class="konten" tabindex="-1">
+      <!-- Pengingat global saat ada misi yang sedang berjalan -->
+      <div id="banner-misi" class="banner-misi" hidden>
+        <span aria-hidden="true">🎯</span>
+        <span id="banner-misi-teks"></span>
+        <a href="#quest">Buka Quest Hub</a>
       </div>
-    </section>
 
-    <!-- Pesan status (sukses / galat) -->
-    <div id="pesan" class="pesan" role="status" aria-live="polite" hidden></div>
+      <!-- Pesan status (sukses / galat / info) -->
+      <div id="pesan" class="pesan" role="status" aria-live="polite" hidden></div>
 
-    <!-- Form transaksi -->
-    <section class="panel" aria-labelledby="judul-form">
-      <h2 id="judul-form">Tambah Transaksi</h2>
-      <form id="form-transaksi" novalidate>
-        <fieldset id="fieldset-form" class="tanpa-garis">
-          <legend class="sr-only">Form transaksi</legend>
+      <!-- ===================== 1. DASHBOARD ===================== -->
+      <section id="tampilan-dashboard" class="tampilan" aria-labelledby="judul-dashboard">
+        <h1 id="judul-dashboard" class="judul-tampilan" tabindex="-1">🏠 Dashboard</h1>
 
-          <div class="grid-form">
-            <div class="bidang">
-              <label for="nama">Nama transaksi</label>
-              <input type="text" id="nama" maxlength="60" autocomplete="off" placeholder="Contoh: Nasi goreng">
-              <span class="galat" id="galat-nama"></span>
-            </div>
-
-            <div class="bidang">
-              <label for="jumlah">Jumlah (Rupiah)</label>
-              <input type="number" id="jumlah" min="1" step="1" inputmode="numeric" placeholder="Contoh: 25000">
-              <span class="galat" id="galat-jumlah"></span>
-            </div>
-
-            <div class="bidang">
-              <label for="kategori">Kategori</label>
-              <select id="kategori"></select>
-              <span class="galat" id="galat-kategori"></span>
-            </div>
-
-            <div class="bidang">
-              <span class="label-grup" id="label-jenis">Jenis</span>
-              <div class="grup-radio" role="radiogroup" aria-labelledby="label-jenis">
-                <label><input type="radio" name="jenis" value="Pemasukan"> Pemasukan</label>
-                <label><input type="radio" name="jenis" value="Pengeluaran" checked> Pengeluaran</label>
-              </div>
-              <span class="galat" id="galat-jenis"></span>
-            </div>
-
-            <div class="bidang" id="grup-tipe">
-              <label for="tipe">Tipe pengeluaran</label>
-              <select id="tipe">
-                <option value="">-- Pilih tipe --</option>
-                <option value="Kebutuhan">Kebutuhan</option>
-                <option value="Keinginan">Keinginan</option>
-              </select>
-              <span class="galat" id="galat-tipe"></span>
+        <div class="kartu kartu-pemain">
+          <div class="pemain-atas">
+            <div class="avatar besar" id="dash-avatar" aria-hidden="true">🦊</div>
+            <div class="pemain-info">
+              <p class="pemain-nama" id="dash-nama">Petualang</p>
+              <p class="pemain-sub">
+                <span class="lencana-level" id="dash-level">Lv. 1</span>
+                <span class="streak" id="dash-streak">🔥 Streak 0 hari</span>
+              </p>
             </div>
           </div>
 
-          <button type="submit" class="tombol utama">Simpan Transaksi</button>
-        </fieldset>
-      </form>
-    </section>
+          <div class="batang-baris">
+            <span class="batang-label">❤️ HP</span>
+            <div class="batang batang-hp" id="dash-hp-batang" role="progressbar" aria-label="HP keuangan"
+                 aria-valuemin="0" aria-valuemax="100">
+              <div class="isi" id="dash-hp-isi"></div>
+            </div>
+            <span class="batang-nilai" id="dash-hp-teks">—</span>
+          </div>
+          <p class="ajakan" id="dash-hp-ajakan" hidden>
+            Isi anggaran bulanan di <a href="#profil">Profil</a> supaya HP keuanganmu aktif.
+          </p>
 
-    <!-- Panel Misi Belajar (muncul untuk pengeluaran Keinginan) -->
-    <section id="panel-misi" class="panel panel-misi" aria-labelledby="judul-misi" hidden>
-      <h2 id="judul-misi">Misi Belajar</h2>
-      <p id="misi-info" class="misi-info"></p>
-      <p>Pilih satu teknik belajar dan selesaikan untuk membuka pembelian ini:</p>
-
-      <div class="grup-radio">
-        <label><input type="radio" name="teknik" value="pomodoro"> Pomodoro</label>
-        <label><input type="radio" name="teknik" value="recall"> Active Recall</label>
-      </div>
-
-      <!-- Teknik Pomodoro -->
-      <div id="bagian-pomodoro" class="bagian-teknik" hidden>
-        <p>Fokus belajar sampai timer habis. Jika timer di-reset, misi harus diulang dari awal.</p>
-        <div id="timer" class="timer" aria-live="off">25:00</div>
-        <div class="baris-tombol">
-          <button type="button" id="tombol-mulai" class="tombol utama">Mulai Timer</button>
-          <button type="button" id="tombol-reset" class="tombol">Reset Timer</button>
+          <div class="batang-baris">
+            <span class="batang-label">✨ EXP</span>
+            <div class="batang batang-exp" id="dash-exp-batang" role="progressbar" aria-label="EXP menuju level berikutnya"
+                 aria-valuemin="0" aria-valuemax="100">
+              <div class="isi" id="dash-exp-isi"></div>
+            </div>
+            <span class="batang-nilai" id="dash-exp-teks">0 / 100</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Teknik Active Recall -->
-      <div id="bagian-recall" class="bagian-teknik" hidden>
-        <p>Tutup catatanmu, lalu tulis dari ingatan apa yang baru kamu pelajari.</p>
-        <div class="bidang">
-          <label for="topik">Topik yang dipelajari</label>
-          <input type="text" id="topik" maxlength="100" autocomplete="off" placeholder="Contoh: Hill-Climbing">
+        <div class="grid-statistik">
+          <div class="kartu statistik">
+            <h2 class="statistik-judul">📆 Menuju gajian</h2>
+            <p class="statistik-angka" id="dash-sisa-hari">0</p>
+            <p class="statistik-ket" id="dash-sisa-hari-ket"></p>
+          </div>
+          <div class="kartu statistik statistik-ungu">
+            <h2 class="statistik-judul">💸 Jatah belanja harian</h2>
+            <p class="statistik-angka" id="dash-jatah">—</p>
+            <p class="statistik-ket" id="dash-jatah-ket"></p>
+          </div>
+          <div class="kartu statistik statistik-pink" id="dash-vault-kartu">
+            <h2 class="statistik-judul">🔐 Vault Keinginan</h2>
+            <p class="statistik-angka"><span id="dash-vault-ikon" aria-hidden="true">🔒</span> <span id="dash-vault-status">Terkunci</span></p>
+            <p class="statistik-ket" id="dash-vault-ket"></p>
+          </div>
         </div>
-        <div class="bidang">
-          <label for="ringkasan">Ringkasan dari ingatan</label>
-          <textarea id="ringkasan" rows="5" placeholder="Tulis ringkasanmu di sini..."></textarea>
-          <span id="penghitung" class="penghitung">0 / 50 karakter</span>
-          <span class="galat" id="galat-recall"></span>
+
+        <div class="grid-ringkasan">
+          <div class="kartu ringkasan">
+            <span class="label">Total Pemasukan</span>
+            <strong id="total-pemasukan" class="angka pemasukan">Rp 0</strong>
+          </div>
+          <div class="kartu ringkasan">
+            <span class="label">Total Pengeluaran</span>
+            <strong id="total-pengeluaran" class="angka pengeluaran">Rp 0</strong>
+          </div>
+          <div class="kartu ringkasan">
+            <span class="label">Saldo</span>
+            <strong id="saldo" class="angka">Rp 0</strong>
+          </div>
         </div>
-        <button type="button" id="tombol-selesai-recall" class="tombol utama" disabled>Selesaikan Misi</button>
-      </div>
+        <p id="peringatan-saldo" class="peringatan" role="status" hidden>
+          ⚠️ Saldo kamu negatif: pengeluaran yang tercatat lebih besar daripada pemasukan.
+        </p>
 
-      <div class="baris-tombol pemisah">
-        <button type="button" id="tombol-batal" class="tombol bahaya">Batalkan Misi</button>
-      </div>
-    </section>
+        <div class="kartu">
+          <div class="kartu-kepala">
+            <h2>🧾 Transaksi terbaru</h2>
+            <a class="tautan" href="#vault">Lihat semua</a>
+          </div>
+          <p id="dash-terbaru-kosong" class="redup">Belum ada transaksi. Mulai catat pengeluaranmu!</p>
+          <ul id="dash-terbaru" class="daftar-terbaru"></ul>
+          <button type="button" id="tombol-cepat-keluar" class="tombol utama besar">➕ Catat Pengeluaran</button>
+        </div>
+      </section>
 
-    <!-- Daftar transaksi -->
-    <section class="panel" aria-labelledby="judul-daftar">
-      <h2 id="judul-daftar">Daftar Transaksi</h2>
-      <div class="bungkus-tabel">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Tanggal</th>
-              <th scope="col">Nama</th>
-              <th scope="col">Kategori</th>
-              <th scope="col">Jenis</th>
-              <th scope="col">Tipe</th>
-              <th scope="col" class="kanan">Jumlah</th>
-              <th scope="col">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="isi-tabel"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+      <!-- ===================== 2. QUEST HUB ===================== -->
+      <section id="tampilan-quest" class="tampilan" aria-labelledby="judul-quest" hidden>
+        <h1 id="judul-quest" class="judul-tampilan" tabindex="-1">⚔️ Quest Hub</h1>
 
-  <script src="script.js"></script>
+        <div class="kartu kartu-harian">
+          <div class="kartu-kepala">
+            <h2>📅 Quest Harian</h2>
+            <span class="lencana-status" id="quest-harian-status">Belum selesai</span>
+          </div>
+          <p class="quest-judul">Selesaikan 1 misi hari ini</p>
+          <p class="redup" id="quest-harian-ket">Hadiah: <strong id="bonus-harian-teks">+10 EXP</strong> bonus, sekali per hari.</p>
+        </div>
+
+        <div class="kartu" aria-labelledby="judul-teknik">
+          <h2 id="judul-teknik">🧭 Pilih Teknik Belajar</h2>
+          <p class="redup" id="teknik-petunjuk">
+            Belum ada misi aktif. Catat pengeluaran bertipe <strong>Keinginan</strong> di Data Vault untuk memulai misi.
+          </p>
+          <div class="grup-teknik" role="radiogroup" aria-labelledby="judul-teknik">
+            <label class="kartu-teknik">
+              <input type="radio" name="teknik" value="pomodoro" disabled>
+              <span class="teknik-isi">
+                <span class="teknik-ikon" aria-hidden="true">⏱️</span>
+                <span class="teknik-nama">Pomodoro</span>
+                <span class="teknik-desk" id="desk-pomodoro">Fokus belajar sampai timer habis, tanpa reset.</span>
+                <span class="teknik-exp" id="exp-pomodoro">+30 EXP</span>
+              </span>
+            </label>
+            <label class="kartu-teknik">
+              <input type="radio" name="teknik" value="recall" disabled>
+              <span class="teknik-isi">
+                <span class="teknik-ikon" aria-hidden="true">🧠</span>
+                <span class="teknik-nama">Active Recall</span>
+                <span class="teknik-desk" id="desk-recall">Tulis topik dan ringkasan dari ingatan.</span>
+                <span class="teknik-exp" id="exp-recall">+20 EXP</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="kartu kartu-misi" id="panel-misi" aria-labelledby="judul-misi">
+          <h2 id="judul-misi">🎯 Panel Misi</h2>
+
+          <div id="misi-kosong">
+            <p class="redup">Tidak ada misi yang sedang berjalan. Vault Keinginan terkunci sampai kamu punya misi.</p>
+            <button type="button" id="tombol-ke-vault" class="tombol">Ke Data Vault</button>
+          </div>
+
+          <div id="misi-aktif" hidden>
+            <p id="misi-info" class="misi-info"></p>
+            <p id="misi-pilih-dulu" class="redup">Pilih satu teknik belajar di atas untuk memulai misi.</p>
+
+            <!-- Teknik Pomodoro -->
+            <div id="bagian-pomodoro" class="bagian-teknik" hidden>
+              <p>Fokus belajar sampai timer mencapai nol. Jika timer di-reset, misi harus diulang dari awal.</p>
+              <div id="timer" class="timer" role="timer" aria-live="off">25:00</div>
+              <div class="baris-tombol">
+                <button type="button" id="tombol-mulai" class="tombol utama">▶ Mulai Timer</button>
+                <button type="button" id="tombol-reset" class="tombol">↺ Reset Timer</button>
+              </div>
+            </div>
+
+            <!-- Teknik Active Recall -->
+            <div id="bagian-recall" class="bagian-teknik" hidden>
+              <p>Tutup catatanmu, lalu tulis dari ingatan apa yang baru kamu pelajari.</p>
+              <div class="bidang">
+                <label for="topik">Topik yang dipelajari</label>
+                <input type="text" id="topik" maxlength="100" autocomplete="off" placeholder="Contoh: Hill-Climbing">
+              </div>
+              <div class="bidang">
+                <label for="ringkasan">Ringkasan dari ingatan</label>
+                <textarea id="ringkasan" rows="5" placeholder="Tulis ringkasanmu di sini..."></textarea>
+                <span id="penghitung" class="penghitung">0 / 50 karakter</span>
+                <span class="galat" id="galat-recall" role="alert"></span>
+              </div>
+              <button type="button" id="tombol-selesai-recall" class="tombol utama" disabled>✅ Selesaikan Misi</button>
+            </div>
+
+            <div class="baris-tombol pemisah">
+              <button type="button" id="tombol-batal" class="tombol bahaya">Batalkan Misi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="kartu">
+          <h2>📜 Riwayat Misi</h2>
+          <p id="riwayat-kosong" class="redup">Belum ada misi. Riwayatmu akan muncul di sini.</p>
+          <ul id="riwayat-misi" class="daftar-riwayat"></ul>
+        </div>
+      </section>
+
+      <!-- ===================== 3. DATA VAULT ===================== -->
+      <section id="tampilan-vault" class="tampilan" aria-labelledby="judul-vault" hidden>
+        <h1 id="judul-vault" class="judul-tampilan" tabindex="-1">🗃️ Data Vault</h1>
+
+        <div class="kartu" aria-labelledby="judul-form">
+          <h2 id="judul-form">Tambah Transaksi</h2>
+          <p id="catatan-form-terkunci" class="peringatan" hidden>
+            🔒 Form dikunci selama misi berjalan. Selesaikan atau batalkan misi di Quest Hub dulu.
+          </p>
+          <form id="form-transaksi" novalidate>
+            <fieldset id="fieldset-form" class="tanpa-garis">
+              <legend class="sr-only">Form transaksi</legend>
+
+              <div class="grid-form">
+                <div class="bidang">
+                  <label for="nama">Nama transaksi</label>
+                  <input type="text" id="nama" maxlength="60" autocomplete="off" placeholder="Contoh: Nasi goreng"
+                         aria-describedby="galat-nama">
+                  <span class="galat" id="galat-nama"></span>
+                </div>
+
+                <div class="bidang">
+                  <label for="jumlah">Jumlah (Rupiah)</label>
+                  <!-- type="text" + inputmode numerik: nilai mentah selalu terbaca sehingga pesan galat akurat -->
+                  <input type="text" id="jumlah" inputmode="numeric" autocomplete="off" maxlength="15"
+                         placeholder="Contoh: 25000" aria-describedby="petunjuk-jumlah galat-jumlah">
+                  <span class="petunjuk" id="petunjuk-jumlah"></span>
+                  <span class="galat" id="galat-jumlah"></span>
+                </div>
+
+                <div class="bidang">
+                  <label for="kategori">Kategori</label>
+                  <select id="kategori" aria-describedby="galat-kategori"></select>
+                  <span class="galat" id="galat-kategori"></span>
+                </div>
+
+                <div class="bidang">
+                  <span class="label-grup" id="label-jenis">Jenis</span>
+                  <div class="grup-radio" role="radiogroup" aria-labelledby="label-jenis">
+                    <label><input type="radio" name="jenis" value="Pemasukan"> Pemasukan</label>
+                    <label><input type="radio" name="jenis" value="Pengeluaran" checked> Pengeluaran</label>
+                  </div>
+                  <span class="galat" id="galat-jenis"></span>
+                </div>
+
+                <div class="bidang" id="grup-tipe">
+                  <label for="tipe">Tipe pengeluaran</label>
+                  <select id="tipe" aria-describedby="galat-tipe">
+                    <option value="">-- Pilih tipe --</option>
+                    <option value="Kebutuhan">Kebutuhan</option>
+                    <option value="Keinginan">Keinginan</option>
+                  </select>
+                  <span class="galat" id="galat-tipe"></span>
+                </div>
+              </div>
+
+              <button type="submit" class="tombol utama">💾 Simpan Transaksi</button>
+            </fieldset>
+          </form>
+        </div>
+
+        <div class="kartu" aria-labelledby="judul-daftar">
+          <h2 id="judul-daftar">Daftar Transaksi</h2>
+          <table class="tabel" role="table">
+            <thead role="rowgroup">
+              <tr role="row">
+                <th scope="col" role="columnheader">Tanggal</th>
+                <th scope="col" role="columnheader">Nama</th>
+                <th scope="col" role="columnheader">Kategori</th>
+                <th scope="col" role="columnheader">Jenis</th>
+                <th scope="col" role="columnheader">Tipe</th>
+                <th scope="col" role="columnheader" class="kanan">Jumlah</th>
+                <th scope="col" role="columnheader">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="isi-tabel" role="rowgroup"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== 4. PROFIL ===================== -->
+      <section id="tampilan-profil" class="tampilan" aria-labelledby="judul-profil" hidden>
+        <h1 id="judul-profil" class="judul-tampilan" tabindex="-1">👤 Profil</h1>
+
+        <div class="kartu" aria-labelledby="judul-identitas">
+          <h2 id="judul-identitas">Identitas &amp; Anggaran</h2>
+          <form id="form-profil" novalidate>
+            <div class="grid-form">
+              <div class="bidang">
+                <label for="profil-nama">Nama</label>
+                <input type="text" id="profil-nama" maxlength="24" autocomplete="off" aria-describedby="galat-profil-nama">
+                <span class="galat" id="galat-profil-nama"></span>
+              </div>
+
+              <div class="bidang">
+                <label for="profil-anggaran">Anggaran bulanan (Rupiah, opsional)</label>
+                <input type="text" id="profil-anggaran" inputmode="numeric" autocomplete="off" maxlength="15"
+                       placeholder="Contoh: 1500000" aria-describedby="galat-profil-anggaran">
+                <span class="galat" id="galat-profil-anggaran"></span>
+              </div>
+
+              <div class="bidang">
+                <label for="profil-gajian">Tanggal gajian / kiriman</label>
+                <select id="profil-gajian" aria-describedby="galat-profil-gajian"></select>
+                <span class="galat" id="galat-profil-gajian"></span>
+              </div>
+            </div>
+
+            <div class="bidang">
+              <span class="label-grup" id="label-avatar">Avatar</span>
+              <div class="grup-avatar" id="grup-avatar" role="radiogroup" aria-labelledby="label-avatar"></div>
+              <span class="galat" id="galat-profil-avatar"></span>
+            </div>
+
+            <button type="submit" class="tombol utama">💾 Simpan Profil</button>
+          </form>
+        </div>
+
+        <div class="kartu" aria-labelledby="judul-statistik">
+          <h2 id="judul-statistik">Statistik</h2>
+          <dl class="grid-stat">
+            <div><dt>Level</dt><dd id="stat-level">1</dd></div>
+            <div><dt>Total EXP</dt><dd id="stat-exp">0</dd></div>
+            <div><dt>Streak</dt><dd id="stat-streak">0 hari</dd></div>
+            <div><dt>Misi selesai</dt><dd id="stat-misi">0</dd></div>
+          </dl>
+        </div>
+
+        <div class="kartu" aria-labelledby="judul-lencana">
+          <h2 id="judul-lencana">🏅 Lencana</h2>
+          <ul class="daftar-lencana" id="daftar-lencana"></ul>
+        </div>
+
+        <div class="kartu kartu-bahaya" aria-labelledby="judul-reset">
+          <h2 id="judul-reset">Zona Berbahaya</h2>
+          <p class="redup">Menghapus semua transaksi, profil, EXP, level, streak, lencana, dan riwayat misi dari browser ini.</p>
+          <button type="button" id="tombol-reset-data" class="tombol bahaya">Reset data</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Animasi "Vault Terbuka": tampil sebelum transaksi Keinginan disimpan -->
+  <div id="overlay-vault" class="overlay" role="status" aria-live="assertive" hidden>
+    <div class="vault-kotak">
+      <div class="vault-ikon" aria-hidden="true">
+        <span class="gembok tutup">🔒</span>
+        <span class="gembok buka">🔓</span>
+      </div>
+      <p class="vault-judul menunggu" aria-hidden="true">Membuka vault…</p>
+      <p class="vault-judul terbuka">Vault Terbuka!</p>
+      <p class="vault-item" id="vault-item"></p>
+    </div>
+  </div>
+
+  <!-- Efek naik level -->
+  <div id="overlay-levelup" class="levelup" role="status" aria-live="polite" hidden>
+    <span class="percik p1" aria-hidden="true">✨</span>
+    <span class="percik p2" aria-hidden="true">⭐</span>
+    <span class="percik p3" aria-hidden="true">✨</span>
+    <span class="percik p4" aria-hidden="true">⭐</span>
+    <p class="levelup-judul">LEVEL UP!</p>
+    <p class="levelup-teks" id="levelup-teks"></p>
+  </div>
+
+  <!-- Dialog konfirmasi (pengganti window.confirm) -->
+  <dialog id="dialog-konfirmasi" aria-labelledby="dk-judul" aria-describedby="dk-isi">
+    <form method="dialog" class="dk-form">
+      <h2 id="dk-judul"></h2>
+      <p id="dk-isi"></p>
+      <div class="dk-aksi">
+        <button type="submit" value="batal" id="dk-batal" class="tombol" autofocus>Batal</button>
+        <button type="submit" value="ya" id="dk-ya" class="tombol utama">Ya</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/konfigurasi.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/penyimpanan.js"></script>
+  <script src="js/tampilan.js"></script>
+  <script src="js/aplikasi.js"></script>
 </body>
 </html>
